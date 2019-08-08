@@ -34,7 +34,7 @@ lazy val root = Project("kamon-on-play-27", file("."))
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "ch.qos.logback.contrib" % "logback-json-classic" % "0.1.5",
       "ch.qos.logback.contrib" % "logback-jackson" % "0.1.5",
-      "io.kamon" %% "kamon-bundle" % "2.0.0-RC3",
+      "io.kamon" %% "kamon-bundle" % "2.0.0",
     ),
   )
 

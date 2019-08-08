@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom
 import kamon.context.HttpPropagation.{HeaderReader, HeaderWriter}
 import kamon.context.{Context, HttpPropagation, Propagation}
 import kamon.tag.Lookups.option
+import kamon.tag.TagSet
 
 
 object HeadersPropagation {
@@ -13,7 +14,6 @@ object HeadersPropagation {
   object Headers {
     val CustomTraceId = "X-Custom-Trace-Id"
     val CustomSpanId = "X-Custom-Span-Id"
-    val ForwardedFor = "X-Forwarded-For"
     val UserAgent = "User-Agent"
   }
 
@@ -37,21 +37,14 @@ object HeadersPropagation {
 
 class HeadersPropagation extends Propagation.EntryReader[HeaderReader] with Propagation.EntryWriter[HeaderWriter] {
 
-  import HeadersPropagation.{Headers, TagFiller, Utils}
+  import HeadersPropagation.{Headers, Utils}
 
   override def read(reader: HttpPropagation.HeaderReader, context: Context): Context = {
-    val customTraceIdValue = reader.read(Headers.CustomTraceId)
-    println(s"********** customTraceIdValue: $customTraceIdValue") // FIXME remove after fix logback module
-    val tags = List(
-      TagFiller(Headers.CustomTraceId, customTraceIdValue.getOrElse(Utils.nextCustomTraceId)),
-      TagFiller(Headers.CustomSpanId, Utils.nextCustomSpanId),
-      TagFiller(Headers.ForwardedFor, reader.read(Headers.ForwardedFor).getOrElse(HeadersPropagation.EmptyForwardedFor)),
-      TagFiller(Headers.UserAgent, reader.read(Headers.UserAgent).getOrElse(HeadersPropagation.EmptyUserAgent)),
-    )
-
-    tags.foldLeft(context)((ctx, tagFiller) =>
-      ctx.withTag(tagFiller.key, tagFiller.value)
-    )
+    context.withTags(TagSet.builder()
+      .add(Headers.CustomTraceId, reader.read(Headers.CustomTraceId).getOrElse(Utils.nextCustomTraceId))
+      .add(Headers.CustomSpanId, Utils.nextCustomSpanId)
+      .add(Headers.UserAgent, reader.read(Headers.UserAgent).getOrElse(HeadersPropagation.EmptyUserAgent))
+      .build())
   }
 
   override def write(context: Context, writer: HttpPropagation.HeaderWriter): Unit = {
@@ -61,6 +54,5 @@ class HeadersPropagation extends Propagation.EntryReader[HeaderReader] with Prop
   val outgoingTags = List(
     Headers.CustomTraceId,
     Headers.CustomSpanId,
-    Headers.ForwardedFor,
   )
 }

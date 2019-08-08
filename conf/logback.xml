@@ -7,7 +7,7 @@
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %d{"yyyy-MM-dd'T'HH:mm:ss,SSS"} %level - %thread | %traceID | %spanID | %X{X-Custom-Trace-Id} | %X{X-Custom-Span-Id} | ${HOSTNAME} | %X{User-Agent} | %X{X-Forwarded-For} | %message%n
+                %d{"yyyy-MM-dd'T'HH:mm:ss,SSS"} %level - %thread | %traceID | %spanID | %X{X-Custom-Trace-Id} | %X{X-Custom-Span-Id} | ${HOSTNAME} | %X{User-Agent} | %X{X-Forwarded-For} | %X{X-Client} | %message%n
             </pattern>
         </encoder>
     </appender>
