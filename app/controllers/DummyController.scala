@@ -1,6 +1,7 @@
 package controllers
 
 import clients.SomeClient
+import filters.UpdateContextFilter
 import javax.inject.{Inject, Singleton}
 import kamon.Kamon
 import kamon.tag.Tag
@@ -13,7 +14,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class DummyController @Inject()(val controllerComponents: ControllerComponents,
                                 val someClient: SomeClient) extends BaseController with LogSupport {
 
-  def get: Action[AnyContent] = Action {
+  def get: Action[AnyContent] = Action { request =>
+
+    logger.info(
+      s"Entry ${Kamon.currentContext().get(UpdateContextFilter.customKey)} read by ${Thread.currentThread()}"
+    )
+
     Ok(bodyResponse(controllers.routes.DummyController.get().url))
       .withHeaders(headers = "Custom-Header" -> "xxx")
   }

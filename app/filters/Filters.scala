@@ -8,5 +8,6 @@ import play.filters.gzip.GzipFilter
 class Filters @Inject()(
                          defaultFilters: EnabledFilters,
                          gzip: GzipFilter,
-                         log: LoggingFilter
-                       ) extends DefaultHttpFilters(defaultFilters.filters :+ gzip :+ log: _*)
+                         log: LoggingFilter,
+                         update: UpdateContextFilter
+                       ) extends DefaultHttpFilters(defaultFilters.filters :+ gzip :+ log :+ update : _*)
