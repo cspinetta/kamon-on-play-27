@@ -1,3 +1,5 @@
 
 GET           /dummy/get                      controllers.DummyController.get
+POST          /dummy/get                      controllers.DummyController.get
+
 GET           /dummy/outgoing-request         controllers.DummyController.outgoingRequest
